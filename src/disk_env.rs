@@ -269,8 +269,8 @@ impl Env for PosixDiskEnv {
         } else {
             let fd = locks.remove(&l.id).unwrap();
             let result = unsafe {
-                let ok = libc::ocall::fcntl_arg0(fd, libc::F_GETFD);
-                if ok < 0 {
+                let r = libc::ocall::fcntl_arg0(fd, libc::F_GETFD);
+                if r.is_err() {
                     // Likely EBADF when already closed. In that case, the lock is released and all is fine.
                     return Ok(());
                 }
